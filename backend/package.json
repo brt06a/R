@@ -1,0 +1,52 @@
+{
+  "name": "ideanax-backend",
+  "version": "1.0.0",
+  "description": "IdeaNax platform backend API",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "worker": "ts-node-dev --respawn --transpile-only src/workers/index.ts"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "cors": "^2.8.5",
+    "helmet": "^8.0.0",
+    "cookie-parser": "^1.4.7",
+    "compression": "^1.7.5",
+    "morgan": "^1.10.0",
+    "@supabase/supabase-js": "^2.49.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "razorpay": "^2.9.5",
+    "bullmq": "^5.34.8",
+    "ioredis": "^5.4.2",
+    "zod": "^3.24.2",
+    "express-rate-limit": "^7.5.0",
+    "uuid": "^11.1.0",
+    "dotenv": "^16.4.7",
+    "winston": "^3.17.0",
+    "csurf": "^1.11.0",
+    "hpp": "^0.2.3",
+    "express-validator": "^7.2.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "@types/node": "^22.13.4",
+    "@types/express": "^5.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/cors": "^2.8.17",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/compression": "^1.7.5",
+    "@types/morgan": "^1.9.9",
+    "@types/uuid": "^10.0.0",
+    "@types/hpp": "^0.2.6",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "nodemon": "^3.1.9",
+    "eslint": "^9.20.0",
+    "prettier": "^3.5.1"
+  }
+}
