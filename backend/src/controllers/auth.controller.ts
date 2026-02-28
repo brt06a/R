@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from '../services/auth.service';
 import { AuthenticatedRequest } from '../middlewares/auth';
-import { sendSuccess } from '../utils/response';
+import { sendSuccess, sendError } from '../utils/response';
 import { env } from '../config/env';
 
 const authService = new AuthService();
@@ -63,7 +63,7 @@ export class AuthController {
     try {
       const token = req.cookies?.refreshToken || req.body.refreshToken;
       if (!token) {
-        res.status(401).json({ success: false, error: { code: 'NO_TOKEN', message: 'Refresh token required' } });
+        sendError(res, 401, 'NO_TOKEN', 'Refresh token required');
         return;
       }
 
