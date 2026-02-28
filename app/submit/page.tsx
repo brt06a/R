@@ -46,13 +46,18 @@ export default function SubmitPage() {
 
         {/* Steps */}
         <div className="flex items-center justify-between mb-12">
-          {STEPS.map((s, i) => (
+          {STEPS.map((s, i) => {
+            const stepClass =
+              i < step
+                ? "bg-violet-600 text-white"
+                : i === step
+                ? "bg-gradient-to-r from-violet-600 to-cyan-600 text-white shadow-lg shadow-violet-500/30"
+                : "bg-white/10 text-gray-400";
+            return (
             <div key={s} className="flex items-center">
               <div className={cn(
                 "w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all",
-                i < step ? "bg-violet-600 text-white" :
-                i === step ? "bg-gradient-to-r from-violet-600 to-cyan-600 text-white shadow-lg shadow-violet-500/30" :
-                "bg-white/10 text-gray-400"
+                stepClass
               )}>
                 {i < step ? <Check className="w-5 h-5" /> : i + 1}
               </div>
@@ -63,7 +68,8 @@ export default function SubmitPage() {
                 <div className={cn("h-0.5 w-8 sm:w-16 mx-2 sm:mx-4 transition-all", i < step ? "bg-violet-600" : "bg-white/10")} />
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="p-8 rounded-2xl bg-gray-900/80 border border-white/10">

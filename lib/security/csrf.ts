@@ -1,8 +1,17 @@
 import { randomBytes, createHmac } from "crypto";
 
-// WARNING: Using a fallback secret is insecure. Set JWT_SECRET in your environment.
-// In production, the application should fail to start if this is not configured.
-const CSRF_SECRET = process.env.JWT_SECRET ?? "fallback-csrf-secret-change-in-production";
+function getCsrfSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("JWT_SECRET environment variable must be set in production");
+    }
+    return "fallback-csrf-secret-change-in-production";
+  }
+  return secret;
+}
+
+const CSRF_SECRET = getCsrfSecret();
 
 export function generateCsrfToken(): string {
   const token = randomBytes(32).toString("hex");
