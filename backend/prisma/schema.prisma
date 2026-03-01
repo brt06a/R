@@ -1,0 +1,179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum IdeaStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SOLD
+}
+
+enum SaleType {
+  FULL_SALE
+  LICENSE
+  FIXED_PRICE
+  AUCTION
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+enum TransactionReason {
+  COIN_PURCHASE
+  IDEA_SUBMISSION
+  WITHDRAWAL
+  REFUND
+  SIGNUP_BONUS
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  PROCESSING
+  COMPLETED
+  FAILED
+  REJECTED
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String?   @unique
+  mobile        String?   @unique
+  dateOfBirth   DateTime
+  password      String
+  role          UserRole  @default(USER)
+  coinBalance   Int       @default(0)
+  walletBalance Float     @default(0)
+  refreshToken  String?
+  otpCode       String?
+  otpExpiresAt  DateTime?
+  isVerified    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  ideas         Idea[]
+  transactions  WalletTransaction[]
+  withdrawals   Withdrawal[]
+  messages      Message[]
+
+  @@index([email])
+  @@index([mobile])
+}
+
+model Category {
+  id                  String   @id @default(uuid())
+  name                String   @unique
+  slug                String   @unique
+  description         String?
+  estimatedEarningMin Int
+  estimatedEarningMax Int
+  icon                String?
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  ideas               Idea[]
+
+  @@index([slug])
+}
+
+model Idea {
+  id              String     @id @default(uuid())
+  userId          String
+  categoryId      String
+  problemDesc     String
+  solutionDesc    String
+  documentUrl     String?
+  prototypeUrl    String?
+  prototypeType   String?
+  saleType        SaleType
+  fixedPrice      Float?
+  status          IdeaStatus @default(PENDING)
+  rejectionReason String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category        Category   @relation(fields: [categoryId], references: [id])
+
+  @@index([userId])
+  @@index([categoryId])
+  @@index([status])
+}
+
+model WalletTransaction {
+  id                String            @id @default(uuid())
+  userId            String
+  type              TransactionType
+  reason            TransactionReason
+  amount            Float
+  coins             Int               @default(0)
+  status            TransactionStatus @default(PENDING)
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  metadata          Json?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([razorpayOrderId])
+}
+
+model Withdrawal {
+  id                 String           @id @default(uuid())
+  userId             String
+  amount             Float
+  platformFee        Float
+  netAmount          Float
+  status             WithdrawalStatus @default(PENDING)
+  accountNumber      String
+  ifscCode           String
+  accountHolderName  String
+  cashfreeTransferId String?
+  processedAt        DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  userId    String
+  subject   String
+  body      String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+}
